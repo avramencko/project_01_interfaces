@@ -27,20 +27,18 @@ public class Room{
         if (area > 0)
             this.area = area;
         else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Недопустимое значение");
         if (numberWidows > 0)
             this.numberWidows = numberWidows;
         else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Недопустимое значение");
 
         this.listBulb = new ArrayList<ILight>();
         this.listFurniture = new ArrayList<IFurniture>();
     }
-
     public String getName() {
         return name;
     }
-
     private int getIllumination(){
         int sum = WND_ILLUMINANCE * numberWidows;
         if(!listBulb.isEmpty())
@@ -63,29 +61,20 @@ public class Room{
                     sum+=((IDoubleArea) furniture).getSecondArea();
         return sum;
     }
-    public void add(ILight light){
-        try {
-            if (getIllumination() + light.getIx() < MAX_ILLUMINANCE)
-                listBulb.add(light);
-            else
+    public void add(ILight light) throws WrongIlluminanceException {
 
-                throw new WrongIlluminanceException();
-        } catch (WrongIlluminanceException e) {
-            e.printStackTrace();
-        }
+        if (getIllumination() + light.getIx() < MAX_ILLUMINANCE)
+            listBulb.add(light);
+        else
+            throw new WrongIlluminanceException("Недопустимое значение. Превышен лимит освещения");
     }
 
-    public void add(IFurniture furniture){
-        try {
-            if (100 * (this.getMaxFilledArea()+furniture.getArea()) / this.area < MAX_SPACE)
-                listFurniture.add(furniture);
-            else
+    public void add(IFurniture furniture) throws WrongSpaceException {
 
-                throw new WrongSpaceException();
-        } catch (WrongSpaceException e) {
-            e.printStackTrace();
-        }
-
+        if (100 * (this.getMaxFilledArea() + furniture.getArea()) / this.area < MAX_SPACE)
+            listFurniture.add(furniture);
+        else
+            throw new WrongSpaceException("Недопустимое значение. Превышен лимит заполнения");
     }
 
     public void describe() {
